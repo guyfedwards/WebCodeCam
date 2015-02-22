@@ -21,6 +21,7 @@ qr-decoder (qrcodelib.js) -> https://github.com/LazarSoft/jsqrcode
     var w, h;
     var DecodeWorker = new Worker("js/DecoderWorker.js");
     var delay = false;
+    var streams = [];
     var pluginName = "WebCodeCam",
         defaults = {
             ReadQRCode: true,
@@ -86,7 +87,7 @@ qr-decoder (qrcodelib.js) -> https://github.com/LazarSoft/jsqrcode
         cameraSuccess: function(stream) {
             var url = window.URL || window.webkitURL;
             camera.src = url ? url.createObjectURL(stream) : stream;
-            $().WebCodeCam.stream = stream;
+            streams.push(stream);
             camera.play();
         },
         cameraError: function(error) {
@@ -204,7 +205,9 @@ qr-decoder (qrcodelib.js) -> https://github.com/LazarSoft/jsqrcode
         cameraStopAll: function () {
             delay = true;
             camera.pause();
-            $().WebCodeCam.stream.stop();
+            for(var i = 0; i < streams.length; i++) {
+                streams[i].stop();
+            }
         },
         cameraPlay: function() {
             delay = true;
